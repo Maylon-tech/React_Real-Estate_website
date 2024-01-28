@@ -42,6 +42,9 @@ export const HouseContextProvider = ({ children }) => {
   const handleClick = () => {
     console.log(country, property, price)
 
+    // Set loading
+    setLoading(true)
+
     // create a function that checks if the string includes '(any)'
     const isDefault = (str) => {
       return str.split(' ').includes('(any)')
@@ -77,7 +80,7 @@ export const HouseContextProvider = ({ children }) => {
       if(!isDefault(country) && isDefault(property) && isDefault(price)) {
         return house.country === country
       }
-
+ 
       // If property is not default
       if(!isDefault(property) && isDefault(country) && isDefault(price)) {
         return house.type === property
@@ -89,9 +92,35 @@ export const HouseContextProvider = ({ children }) => {
           return house
         }
       }
+
+      // country and property is not Default
+      if(!isDefault(country) && !isDefault(property) && isDefault(price)) {
+        return house.country === country && house.type === property
+      }
+
+       // country and price is not Default
+       if(!isDefault(country) && isDefault(property) && !isDefault(price)) {
+        if(housePrice >= minPrice && housePrice <= maxPrice) {
+          return house.country === country && country
+        }
+      }
+
+      // property & price is not Default
+      if(isDefault(country) && !isDefault(property) && !isDefault(price)) {
+        if(housePrice >= minPrice && housePrice <= maxPrice) {
+          return house.type === property
+        }
+      }
+
     })
 
-    console.log(newHouses)
+    setTimeout(() => {
+      return newHouses.length < 1 
+        ? setHouses([])
+        : setHouses(newHouses),
+      
+        setLoading(false)
+    }, 1000)
   }
 
   return (
